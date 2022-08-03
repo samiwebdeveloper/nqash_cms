@@ -37,9 +37,10 @@ class Project_Controller extends CI_Controller
 	{
 		$id = $this->uri->segment(3);
 		$data['data'] = $this->Project_Model->fetch_record_detail($id);
+
 		$data['get_event_data'] = $this->Project_Model->get_event($id);
 		$data['get_event_img_data'] = $this->Project_Model->event_img_data($id);
-		$this->load->view('edit_event_view', $data);
+		$this->load->view('edit_project_view', $data);
 	}
 	public function update_sorting()
 	{
@@ -49,61 +50,13 @@ class Project_Controller extends CI_Controller
 		$data = array(
 			'sortno' 		=> $sort_no
 		);
-		$this->Project_Model->Update_record('nqash_cms.tblProjects', 'ProjectId', $id, $data);	
+		$this->Project_Model->Update_record('nqash_cms.tblProjects', 'ProjectId', $id, $data);
 		echo '<div class="  col-md-12 alert alert-success" role="alert"> <button class="close "  data-dismiss="alert"></button>
 	<strong>Successfully!: </strong>Records has been Update. </div>';
 	}
 
 
-	// get data from group edit  form and update in tbleventimage and tblevent
-	public function edit_master_detail_row()
-	{
-		// update tblevent 
-		$id = $this->Project_Model->edit_event_record(trim($_POST['title']), trim($_POST['eventdate']), trim($_POST['detail']), $_POST['event_id']);
-		// delete old data according to id from tbleventimg table;
-		$id_arr = $_POST['id'];
-		if (!empty($_POST['id'])) {
-			foreach ($id_arr as  $row_id) {
-				$this->Project_Model->Delete_record('nqash_cms.tbleventimage', 'EventImageId', $row_id);
-			}
-		}
 
-		for ($i = 0; $i < count($_FILES['img_name']['name']); $i++) {
-			$alternattext = $_POST['text'][$i];
-			if (strlen($_FILES['img_name']['name'][$i]) == 0) {
-				$img = $_POST['file_text'][$i];
-			} else {
-				$_FILES['file']['name'] = $_FILES['img_name']['name'][$i];
-				$_FILES['file']['type'] = $_FILES['img_name']['type'][$i];
-				$_FILES['file']['tmp_name'] = $_FILES['img_name']['tmp_name'][$i];
-				$_FILES['file']['error'] = $_FILES['img_name']['error'][$i];
-				$_FILES['file']['size'] = $_FILES['img_name']['size'][$i];
-
-				$config['upload_path'] = 'assets/upload_image/';
-				$config['allowed_types'] = 'jpg|jpeg|png';
-				$config['encrypt_name'] = TRUE;
-
-				$this->load->library('upload', $config);
-				if (!$this->upload->do_upload('file')) {
-					$data['error'] =  '<div class="  col-md-12 alert alert-danger" role="alert"> <button class="close "  data-dismiss="alert"></button>
-						<strong>Alert!: </strong>Upload Correct File Formate. </div>';
-				} else {
-					$data_ = array('upload_data' => $this->upload->data());
-					$imgName[$i] = $this->upload->data();
-					$img = $imgName[$i]['file_name'];
-				}
-			}
-			$event_detail = [
-				'EventId' => trim($_POST['event_id']),
-				'Image' =>  trim($img),
-				'Alternative' => trim($alternattext)
-			];
-			$this->Project_Model->Insert_record('nqash_cms.tbleventimage', $event_detail);
-		}
-		$this->session->set_flashdata('msg', '<div class="  col-md-12 alert alert-success" role="alert"> <button class="close "  data-dismiss="alert"></button>
-		<strong>Successfully!: </strong>Records has been saved. </div>');
-		redirect(base_url() . "Event_Controller");
-	}
 
 	public function edit_record()
 	{
@@ -157,6 +110,99 @@ class Project_Controller extends CI_Controller
 		$this->session->set_flashdata('msg', '<div class="  col-md-12 alert alert-success" role="alert"> <button class="close "  data-dismiss="alert"></button>
 		<strong>Successfully!: </strong>Records has been Deleted. </div>');
 		redirect(base_url() . "Project_Controller");
+	}
+	// get data from group edit  form and update in tbleventimage and tblevent
+	public function edit_master_detail_row()
+	{
+		// echo $_POST['Org_logo_previous'];
+         if (file_exists(FCPATH."assets/projects_images/".$_POST['Org_logo_previous'])) {
+			unlink(FCPATH."assets/projects_images/".$_POST['Org_logo_previous']);
+		 }
+
+		$config['upload_path'] = 'assets/projects_images/';
+		$config['allowed_types'] = '*';
+		$config['encrypt_name'] = TRUE;
+		$this->load->library('upload', $config);
+		if (strlen($_FILES['OrganizationLogo']['name']) == 0) {
+			$record_data["OrganizationLogo"] = $_POST['Org_logo_previous'];
+		} else {
+			if (file_exists(FCPATH."assets/projects_images/".$_POST['Org_logo_previous'])) {
+				unlink(FCPATH."assets/projects_images/".$_POST['Org_logo_previous']);
+			 }
+			$this->upload->do_upload('OrganizationLogo');
+			$record_data["OrganizationLogo"] = $this->upload->data('file_name');
+		}
+
+		if (strlen($_FILES['File']['name']) == 0) {
+			$record_data["File"] = $_POST['file_previous'];
+		} else {
+			if (file_exists(FCPATH."assets/projects_images/".$_POST['file_previous'])) {
+				unlink(FCPATH."assets/projects_images/".$_POST['file_previous']);
+			 }
+			$this->upload->do_upload('File');
+			$record_data["File"] = $this->upload->data('file_name');
+		}
+		$data['data'] = $this->Project_Model->fetch_record();
+
+		$project_id = trim($this->input->post('project_id'));
+		$title = trim($this->input->post('title'));
+		$Period = trim($this->input->post('Period'));
+		$Organization = trim($this->input->post('Organization'));
+		$detail = trim($this->input->post('detail'));
+		$OrganizationLogo = trim($record_data["OrganizationLogo"]);
+		$File = trim($record_data["File"]);
+		$SortNo = trim($this->input->post('SortNo'));
+
+		// update tblevent 
+		$id = $this->Project_Model->edit_event_record($title, $Period, $Organization, $OrganizationLogo, $detail, $File, $SortNo, $project_id);
+
+		// delete old data according to id from tbleventimg table;
+		$id_arr = $_POST['id'];
+		if (!empty($_POST['id'])) {
+			foreach ($id_arr as  $row_id) {
+				$this->Project_Model->Delete_record('nqash_cms.tblprojectimage', 'ProjectImageId', $row_id);
+			}
+		}
+
+		for ($i = 0; $i < count($_FILES['img_name']['name']); $i++) {
+			$alternattext = $_POST['text'][$i];
+			if (strlen($_FILES['img_name']['name'][$i]) == 0) {
+				$img = $_POST['file_text'][$i];
+
+			} else {
+				if (file_exists(FCPATH."assets/projects_images/".$_POST['file_text'][$i])) {
+					unlink(FCPATH."assets/projects_images/".$_POST['file_text'][$i]);
+				 }
+				$_FILES['file']['name'] = $_FILES['img_name']['name'][$i];
+				$_FILES['file']['type'] = $_FILES['img_name']['type'][$i];
+				$_FILES['file']['tmp_name'] = $_FILES['img_name']['tmp_name'][$i];
+				$_FILES['file']['error'] = $_FILES['img_name']['error'][$i];
+				$_FILES['file']['size'] = $_FILES['img_name']['size'][$i];
+
+				$config['upload_path'] = 'assets/projects_images/';
+				$config['allowed_types'] = 'jpg|jpeg|png';
+				$config['encrypt_name'] = TRUE;
+
+				$this->load->library('upload', $config);
+				if (!$this->upload->do_upload('file')) {
+					$data['error'] =  '<div class="  col-md-12 alert alert-danger" role="alert"> <button class="close "  data-dismiss="alert"></button>
+					<strong>Alert!: </strong>Upload Correct File Formate. </div>';
+				} else {
+					$data_ = array('upload_data' => $this->upload->data());
+					$imgName[$i] = $this->upload->data();
+					$img = $imgName[$i]['file_name'];
+				}
+			}
+			$Project_detail = [
+				'ProjectId' => trim($_POST['project_id']),
+				'Image' =>  trim($img),
+				'Alternative' => trim($alternattext)
+			];
+			$this->Project_Model->Insert_record('nqash_cms.tblprojectimage', $Project_detail);
+		}
+		$this->session->set_flashdata('msg', '<div class="  col-md-12 alert alert-success" role="alert"> <button class="close "  data-dismiss="alert"></button>
+	<strong>Successfully!: </strong>Records has been saved. </div>');
+		redirect("Project_Controller");
 	}
 
 	public function insert_data()

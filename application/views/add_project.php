@@ -165,8 +165,8 @@ $this->load->view('inc/header');
 													$i = 1;
 
 													foreach ($data as $item) {
-														
-														
+
+
 														$ProjectId = $item['ProjectId'];
 														$Title = $item['Title'];
 														$Period = $item['Period'];
@@ -181,32 +181,34 @@ $this->load->view('inc/header');
 
 															<td><?php echo $i ?></td>
 															<td class="text-center " style="cursor:pointer;" data-toggle="modal" data-target="#img_<?php echo $ProjectId ?>">
-															<img width="30px" height="30px" src="<?php echo base_url(); ?>assets/projects_images/<?php echo $OrganizationLogo; ?>"> </td>
-																<div class="modal" id="img_<?php echo $ProjectId ?>">
-																	<div class="modal-dialog">
-																		<div class="modal-content">
-																			<!-- Modal Header -->
-																			<div class="modal-header">
-																				<h4 class="modal-title"><?php echo $Organization ?> </h4>
-																				<button type="button" class="close" data-dismiss="modal">&times;</button>
-																			</div>
-																			<!-- Modal body -->
-																			<div class="modal-body">
-																				<img width="100%" height="80%" src="<?php echo base_url(); ?>assets/projects_images/<?php echo $OrganizationLogo ?>" >
-																			</div>
-																			<!-- Modal footer -->
-																			<div class="modal-footer">
-																				<button type="button" style="border:2px solid gray !important ;" class="btn btn-default " data-dismiss="modal" type="submit">Close</button>
-																			</div>
+																<img width="30px" height="30px" src="<?php echo base_url(); ?>assets/projects_images/<?php echo $OrganizationLogo; ?>">
+															</td>
+															<div class="modal" id="img_<?php echo $ProjectId ?>">
+																<div class="modal-dialog">
+																	<div class="modal-content">
+																		<!-- Modal Header -->
+																		<div class="modal-header">
+																			<h4 class="modal-title"><?php echo $Organization ?> </h4>
+																			<button type="button" class="close" data-dismiss="modal">&times;</button>
+																		</div>
+																		<!-- Modal body -->
+																		<div class="modal-body">
+																			<img width="100%" height="80%" src="<?php echo base_url(); ?>assets/projects_images/<?php echo $OrganizationLogo ?>">
+																		</div>
+																		<!-- Modal footer -->
+																		<div class="modal-footer">
+																			<button type="button" style="border:2px solid gray !important ;" class="btn btn-default " data-dismiss="modal" type="submit">Close</button>
 																		</div>
 																	</div>
 																</div>
-																<td><?php echo $Organization ?> </td>
-																<td><a target="_blank" href="<?php echo base_url(); ?>assets/projects_images/<?php echo $File ?>">Open <?php $get_exten=explode('.', $File);echo $get_exten[1]?> File </a> </td>
+															</div>
+															<td><?php echo $Organization ?> </td>
+															<td><a target="_blank" href="<?php echo base_url(); ?>assets/projects_images/<?php echo $File ?>">Open <?php $get_exten = explode('.', $File);
+																																									echo $get_exten[1] ?> File </a> </td>
 															<td><?php echo $Title ?> </td>
 															<td><?php echo $Period ?> </td>
 															<td><?php echo $Detail ?> </td>
-															<td class="edit_dc" width="70px"> <input  disabled class="pickvalue form-control" type="number" value="<?php echo   $sort_no ?>"></td>
+															<td class="edit_dc" width="70px"> <input disabled class="pickvalue form-control" type="number" value="<?php echo   $sort_no ?>"></td>
 															<td hidden> <input type="number" hidden class="row_id " value="<?php echo $ProjectId ?>"></td>
 
 
@@ -319,7 +321,6 @@ $this->load->view('inc/footer');
 		$('#f_panel').hide();
 
 		var d_class = $('#d_panel').attr('class');
-
 		if (f_class.indexOf('col-md-5') != -1) {
 			f_class = f_class.replace('col-md-5', 'col-md-0');
 			d_class = d_class.replace('col-md-7', 'col-md-12');

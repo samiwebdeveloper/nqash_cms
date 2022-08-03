@@ -15,7 +15,7 @@ class Project_Model extends CI_Model
 	}
     public function get_event($id)
     {
-        $query = $this->db->query("SELECT * FROM nqash_cms.tblevent where EventId='$id' ");
+        $query = $this->db->query("SELECT * FROM nqash_cms.tblprojects where ProjectId='$id' ");
         return $query->result_array();
     }
 
@@ -25,22 +25,24 @@ class Project_Model extends CI_Model
         $this->db->query($query);
         
     }
-    public function edit_event_record($title,$date,$detail,$id)
+    public function edit_event_record($title,$Period,$Organization,$OrganizationLogo,$detail,$File,$SortNo,$project_id)
     {
-        $query = "UPDATE nqash_cms.tblevent SET `Title`='$title',`EventDate`='$date',`Detail`='$detail' WHERE EventId='$id'";
+        $query = "UPDATE nqash_cms.tblprojects SET `Title`='$title',`Period`='$Period',`Organization`='$Organization',`OrganizationLogo`='$OrganizationLogo',`Details`='$detail',`SortNo`='$SortNo',`File`='$File' WHERE ProjectId='$project_id'";
         $this->db->query($query);
     }
+
     public function fetch_record_detail($id)
     {
-         $query = $this->db->query("SELECT * FROM nqash_cms.tbleventimage INNER JOIN nqash_cms.tblevent on tbleventimage.EventId=tblevent.EventId where tbleventimage.EventId='$id' order by tblevent.EventId desc ");
+         $query = $this->db->query("SELECT * FROM nqash_cms.tblprojectimage INNER JOIN nqash_cms.tblprojects on tblprojectimage.ProjectId=tblprojects.ProjectId where tblprojectimage.ProjectId='$id' order by tblprojects.ProjectId desc ");
         return $query->result_array();
     }
     public function fetch_record()
     {
         $query = $this->db->query("SELECT * FROM nqash_cms.tblprojects ");
-        // $query = $this->db->query("SELECT * FROM nqash_cms.tbleventimage INNER JOIN nqash_cms.tblevent on tbleventimage.EventId=tblevent.EventId order by tblevent.EventId desc ");
         return $query->result_array();
     }
+
+
 
     public function get_event_img_data($id)
     {
@@ -49,7 +51,7 @@ class Project_Model extends CI_Model
     }
     public function event_img_data($id)
     {
-        $query = $this->db->query("SELECT * FROM nqash_cms.tbleventimage where EventId='$id' ");
+        $query = $this->db->query("SELECT * FROM nqash_cms.tblprojectimage where ProjectId='$id' ");
         return $query->result_array();
     }
 
@@ -61,7 +63,7 @@ class Project_Model extends CI_Model
 
     public function event_img($id)
     {
-        $query = $this->db->query("SELECT * FROM nqash_cms.tbleventimage where EventId='$id' ");
+        $query = $this->db->query("SELECT * FROM nqash_cms.tblprojectimage where ProjectId='$id' ");
         // $query = $this->db->query("SELECT * FROM nqash_cms.tbleventimage INNER JOIN nqash_cms.tblevent on tbleventimage.EventId=tblevent.EventId ");
         return $query->result_array();
     }

@@ -17,6 +17,7 @@ $this->load->view('inc/header');
 		padding-left: 4px;
 	}
 
+
 	body {
 		background-color: #f0f0f0 !important;
 	}
@@ -72,8 +73,16 @@ $this->load->view('inc/header');
 										<div class="card-title">Create Slider </div>
 									</div>
 									<div class="card-body">
-										<?php echo $error['error'] ?>
-										<form enctype="multipart/form-data" class="row  needs-validation" novalidate method="POST" action="<?php echo base_url() ?>Slider_Controller/insert_slider_data">
+										<?php echo  $this->session->flashdata('msg'); ?>
+
+										<?php
+										if (!empty($fetch_record)) {
+											$action_path = "Slider_Controller/edit_data";
+										} else {
+											$action_path = "Slider_Controller/insert_slider_data";
+										}
+										?>
+										<form enctype="multipart/form-data" id="add_name" class="row  needs-validation" novalidate method="POST" action="<?php echo base_url() . $action_path ?>">
 											<link href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
 											<script src="<?php echo base_url(); ?>assets/js/bootstrap.bundle.min.js"></script>
 											<style>
@@ -90,55 +99,129 @@ $this->load->view('inc/header');
 													transition: opacity .1s ease-in-out, transform .1s ease-in-out;
 												}
 											</style>
-											<div class="col-md-12 my-3 form-floating ">
-												<input type="date" class="form-control" value="<?php echo date('Y-m-d') ?>" name="sliderdate" id="floatingInput" required>
-												<label for="validationTooltip01" class="form-label">Date</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12 my-3 form-floating ">
-												<input type="date" class="form-control" name="startdate" id="floatingInput" value="<?php echo date('Y-m-d') ?>" required>
-												<label for="validationTooltip01" class="form-label">Start Date</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12 my-3 form-floating ">
-												<input type="date" class="form-control" name="enddate" id="floatingInput" value="<?php echo date('Y-m-d', strtotime('+2 days')) ?>" required>
-												<label for="validationTooltip01" class="form-label">End Date</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12   my-3 form-floating ">
 
-												<select class="form-select" name="type" id="slider_type" required>
-													<option selected disabled value="">Choose...</option>
-													<option>Promotion</option>
-													<option>Promotion</option>
-													<option>Promotion</option>
-												</select>
-												<label for="slider_type" class="form-label">Select Type</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12 my-3 form-floating ">
-												<input type="text" class="form-control" name="title" id="floatingInput" placeholder="name@example.com" required>
-												<label for="validationTooltip01" class="form-label">Title</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12 my-3 form-floating">
-												<input type="file" class="form-control" name="file" accept=".png, .jpg, .jpeg" id="validationTooltip01" required>
-												<label for="validationTooltip01" class="form-label">Upload Slider Image</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
-											<div class="col-md-12 my-4 form-floating ">
-												<textarea class="form-control" style="height:100px ;" name="detail" placeholder="Leave a Detail here" id="floatingTextarea2" required></textarea>
-												<label for="floatingTextarea2">Detail</label>
-												<div class="valid-tooltip">Looks good!</div>
-												<div class="invalid-tooltip">This Field Is Required!</div>
-											</div>
+											<?php
+											if (!empty($fetch_record)) {
+												foreach ($fetch_record as $rows) {
+													$SliderId = $rows->SliderId;
+													$SliderDate = $rows->SliderDate;
+													$StartDate = $rows->StartDate;
+													$EndDate = $rows->EndDate;
+													$Detail = $rows->Detail;
+													$Title = $rows->Title;
+													$Type = $rows->Type;
+													$Image = $rows->Image;
+												}
+											?>
 
+												<input type="text" hidden name="id" value="<?php echo $SliderId ?>">
+												<input type="text" hidden name="Image_text" value="<?php echo $Image ?>">
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" value="<?php echo date('Y-m-d', strtotime($SliderDate)) ?>" name="sliderdate" id="floatingInput" required>
+													<label for="validationTooltip01" class="form-label">Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" name="startdate" id="floatingInput" value="<?php echo date('Y-m-d', strtotime($StartDate)) ?>" required>
+													<label for="validationTooltip01" class="form-label">Start Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" name="enddate" id="floatingInput" value="<?php echo date('Y-m-d', strtotime($EndDate)) ?>" required>
+													<label for="validationTooltip01" class="form-label">End Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+
+												<div class="col-md-12   my-3 form-floating ">
+													<select class="form-select" name="type" id="slider_type" required>
+														<option selected disabled value="">Choose...</option>
+														<option value="Promotion">Promotion</option>
+														<option value="Bonus">Bonus</option>
+														<option value="Promotion">Promotion</option>
+													</select>
+													<label for="slider_type" class="form-label">Select Type</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="text" class="form-control" name="title" id="floatingInput" value="<?php echo $Title; ?>" required>
+													<label for="validationTooltip01" class="form-label">Title</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+
+												<div class="col-md-9 my-3 form-floating">
+													<input type="file" class="form-control" name="file" accept=".png, .jpg, .jpeg" id="validationTooltip01">
+													<label for="validationTooltip01" class="form-label">Upload Slider Image</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-3 my-3 form-floating">
+													<img style="border-radius:2px;" width="60px" height="60px" src="<?php echo base_url() ?>assets/upload_sliders/<?php echo $Image ?>" alt="">
+												</div>
+
+												<div class="col-md-12 my-4 form-floating ">
+													<textarea class="form-control" style="height:100px;" name="detail" placeholder="Leave a Detail here" id="floatingTextarea2" required><?php echo $Detail; ?></textarea>
+													<label for="floatingTextarea2">Detail</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+											<?php } else { ?>
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" value="<?php echo date('Y-m-d') ?>" name="sliderdate" id="floatingInput" required>
+													<label for="validationTooltip01" class="form-label">Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" name="startdate" id="floatingInput" value="<?php echo date('Y-m-d') ?>" required>
+													<label for="validationTooltip01" class="form-label">Start Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="date" class="form-control" name="enddate" id="floatingInput" value="<?php echo date('Y-m-d', strtotime('+2 days')) ?>" required>
+													<label for="validationTooltip01" class="form-label">End Date</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12   my-3 form-floating ">
+
+													<select class="form-select" name="type" id="slider_type" required>
+														<option selected disabled value="">Choose...</option>
+														<option>Promotion</option>
+														<option>Promotion</option>
+														<option>Promotion</option>
+													</select>
+													<label for="slider_type" class="form-label">Select Type</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12 my-3 form-floating ">
+													<input type="text" class="form-control" name="title" id="floatingInput" placeholder="name@example.com" required>
+													<label for="validationTooltip01" class="form-label">Title</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12 my-3 form-floating">
+													<input type="file" class="form-control" name="file" accept=".png, .jpg, .jpeg" id="validationTooltip01" required>
+													<label for="validationTooltip01" class="form-label">Upload Slider Image</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+												<div class="col-md-12 my-4 form-floating ">
+													<textarea class="form-control" style="height:100px ;" name="detail" placeholder="Leave a Detail here" id="floatingTextarea2" required></textarea>
+													<label for="floatingTextarea2">Detail</label>
+													<div class="valid-tooltip">Looks good!</div>
+													<div class="invalid-tooltip">This Field Is Required!</div>
+												</div>
+											<?php } ?>
 											<div class="col-md-12 my-2 text-center">
 												<button class="btn btn-danger" id="cancel" type="reset"> Cancel</button>
 												<button class="btn btn-primary" type="reset">Reset</button>
@@ -171,7 +254,7 @@ $this->load->view('inc/header');
 														<th>Detail</th>
 														<th>File</th>
 														<th style="display:none ;">id</th>
-														<th  class="text-center">Action</th>
+														<th class="text-center">Action</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -188,16 +271,13 @@ $this->load->view('inc/header');
 															<td><?php echo $item->Type ?></td>
 															<td><?php echo $item->Title ?></td>
 															<td><?php echo $item->Detail ?></td>
-															<td><?php echo $item->Image ?></td>
+															<td>
+																<img style="border-radius:2px;" width="30px" height="30px" src="<?php echo base_url() ?>assets/upload_sliders/<?php echo   $item->Image; ?>" alt="">
+															</td>
 															<td hidden class='row_id'><?php echo $id ?></td>
 															<td class="text-center ">
-																<button data-toggle="modal" data-target="#edit" class="edit_btn btn btn-success btn-sm">
-																	<i class="fa fa-edit"></i>
-																</button>
-															
-																<button data-toggle="modal" data-target="#edit" class="edit_btn btn btn-danger btn-sm">
-																	<i class="fa fa-trash"></i>
-																</button>
+																<a href="<?php echo base_url() ?>Slider_Controller/edit_record/<?php echo $id; ?>" class="edit_btn btn btn-success btn-sm"><i class="fa fa-edit"></i></a>
+																<a href="<?php echo base_url() ?>Slider_Controller/delete_record/<?php echo $id; ?>" class="edit_btn btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
 															</td>
 														</tr>
 													<?php } ?>
@@ -231,8 +311,9 @@ $this->load->view('inc/header');
 	<script>
 		function filters() {
 			var f_class = $('#f_panel').attr('class');
-			var d_class = $('#d_panel').attr('class');
+			$('#f_panel').hide();
 
+			var d_class = $('#d_panel').attr('class');
 			if (f_class.indexOf('col-md-4') != -1) {
 				f_class = f_class.replace('col-md-4', 'col-md-0');
 				d_class = d_class.replace('col-md-8', 'col-md-12');
@@ -246,14 +327,6 @@ $this->load->view('inc/header');
 			$('#f_panel').attr('class', f_class);
 			$('#d_panel').attr('class', d_class);
 		}
-		var data_arr = [];
-		var order_others = '';
-		var js_obj = "";
-		var table = "";
-
-		function rate_cus() {
-
-		};
 	</script>
 	<script>
 		// Example starter JavaScript for disabling form submissions if there are invalid fields
